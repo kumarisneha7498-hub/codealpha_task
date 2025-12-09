@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { mockService } from './services/mockBackend';
-import { generatePostCaption, enhanceBio } from './services/geminiService';
 import { User, Post } from './types';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
 import PostCard from './components/PostCard';
 import Header from './components/Header';
-import { Loader2, Sparkles, Image as ImageIcon, X, Camera, LogIn, Save, PlusSquare } from 'lucide-react';
+import { Loader2, Image as ImageIcon, X, Camera, LogIn, Save, PlusSquare } from 'lucide-react';
 
 const App: React.FC = () => {
   // --- State ---
@@ -21,13 +20,9 @@ const App: React.FC = () => {
   
   // Create Post State
   const [newPostContent, setNewPostContent] = useState('');
-  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [showAiModal, setShowAiModal] = useState(false);
 
   // Settings State
   const [settingsBio, setSettingsBio] = useState('');
-  const [isEnhancingBio, setIsEnhancingBio] = useState(false);
 
   // Auth State
   const [loginUsername, setLoginUsername] = useState('');
@@ -147,33 +142,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleAiGenerate = async () => {
-    if (!aiPrompt.trim()) return;
-    setIsGeneratingAI(true);
-    try {
-      const caption = await generatePostCaption(aiPrompt);
-      setNewPostContent(caption);
-      setShowAiModal(false);
-      setAiPrompt('');
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsGeneratingAI(false);
-    }
-  };
 
-  const handleEnhanceBio = async () => {
-      if (!settingsBio.trim()) return;
-      setIsEnhancingBio(true);
-      try {
-          const enhanced = await enhanceBio(settingsBio);
-          setSettingsBio(enhanced);
-      } catch (err) {
-          console.error(err);
-      } finally {
-          setIsEnhancingBio(false);
-      }
-  };
 
   const handleSaveSettings = async () => {
       if (!currentUser) return;
@@ -308,14 +277,6 @@ const App: React.FC = () => {
             value={newPostContent}
             onChange={(e) => setNewPostContent(e.target.value)}
             ></textarea>
-            
-            <button 
-                onClick={() => setShowAiModal(true)}
-                className="absolute right-3 bottom-3 flex items-center space-x-1 text-xs bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-3 py-1.5 rounded-full hover:shadow-lg transition-all"
-            >
-                <Sparkles className="w-3 h-3" />
-                <span>AI Magic</span>
-            </button>
         </div>
 
         <div className="flex justify-between items-center">
@@ -341,36 +302,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Modal */}
-      {showAiModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold flex items-center text-gray-800">
-                    <Sparkles className="w-5 h-5 text-purple-500 mr-2" />
-                    Generate with Gemini
-                </h3>
-                <button onClick={() => setShowAiModal(false)}><X className="w-5 h-5 text-gray-400" /></button>
-            </div>
-            <p className="text-sm text-gray-600 mb-3">What is your post about?</p>
-            <input 
-                type="text"
-                autoFocus
-                className="w-full border border-gray-300 rounded-lg p-3 focus:border-purple-500 outline-none mb-4"
-                placeholder="e.g., A beautiful sunrise in the mountains..."
-                value={aiPrompt}
-                onChange={(e) => setAiPrompt(e.target.value)}
-            />
-            <button 
-                onClick={handleAiGenerate}
-                disabled={isGeneratingAI || !aiPrompt}
-                className="w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 flex justify-center items-center font-medium"
-            >
-                {isGeneratingAI ? <Loader2 className="animate-spin w-5 h-5" /> : 'Generate Caption'}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -529,14 +460,7 @@ const App: React.FC = () => {
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none h-32 resize-none"
                                 placeholder="Tell the world about yourself..."
                             />
-                            <button 
-                                onClick={handleEnhanceBio}
-                                disabled={isEnhancingBio || !settingsBio}
-                                className="absolute right-3 bottom-3 flex items-center space-x-1 text-xs bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-3 py-1.5 rounded-full hover:shadow-lg transition-all"
-                            >
-                                {isEnhancingBio ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                                <span>Enhance</span>
-                            </button>
+                            
                         </div>
                     </div>
 
@@ -560,7 +484,7 @@ const App: React.FC = () => {
                         <p className="text-sm text-gray-500">v1.0.0 (Beta)</p>
                     </div>
                     <div className="text-xs text-gray-400">
-                        Built with React + Gemini
+                        Built with React
                     </div>
                 </div>
             </div>

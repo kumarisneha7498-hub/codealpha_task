@@ -5,7 +5,6 @@ import { ProductList } from './components/ProductList';
 import { ProductModal } from './components/ProductModal';
 import { CartDrawer } from './components/CartDrawer';
 import { AuthModal } from './components/AuthModal';
-import { AIChatBot } from './components/AIChatBot';
 import { Toaster } from 'react-hot-toast';
 
 const App: React.FC = () => {
@@ -18,7 +17,6 @@ const App: React.FC = () => {
         <ProductModal />
         <CartDrawer />
         <AuthModal />
-        <AIChatBot />
         <Toaster position="bottom-center" />
       </Layout>
     </StoreProvider>
